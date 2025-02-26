@@ -19,7 +19,7 @@
         margin: 0;
         padding: 20px;
         box-sizing: border-box;
-        overflow: hidden;
+        overflow-y: auto;
         position: relative;
     }
 
@@ -33,9 +33,10 @@
         height: 100%;
         background: url('https://www.transparenttextures.com/patterns/leaves.png');
         opacity: 0.2;
+        animation: moveLeaves 20s linear infinite;
         z-index: -1;
     }
-
+    
     /* Dashboard */
     .dashboard {
         max-width: 2000px;
