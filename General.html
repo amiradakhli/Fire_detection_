@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analyse Générale</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+</head>
+<body>
+  <h1>Analyse Générale</h1>
+  <canvas id="generalChart" width="800" height="400"></canvas>
+
+  <section id="interpretation">
+    <h2>Interprétation des Données</h2>
+    <p id="interpretation-text">Chargement des données...</p>
+  </section>
+
+  <script>
+    // Configuration Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQR6SPQmcR_VB4iMyb5kdr-CFCgnsBp6Q",
+      authDomain: "fire-detection-aafdc.firebaseapp.com",
+      databaseURL: "https://fire-detection-aafdc-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "fire-detection-aafdc",
+      storageBucket: "fire-detection-aafdc.firebasestorage.app",
+      messagingSenderId: "866669467002",
+      appId: "1:866669467002:web:2139a073556a7527afb2c3"
+    };
+
+    // Initialisation Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const sensorsRef = database.ref('sensor');
+
+    // Configuration du graphique
+    const ctx = document.getElementById('generalChart').getContext('2d');
+    const generalChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [], // Étiquettes de temps
+        datasets: [
+          {
+            label: 'Température (°C)',
+            data: [],
+            borderColor: 'rgba(255, 99, 132, 1)', // Rouge
+            borderWidth: 2,
+            fill: false
+          },
+          {
+            label: 'Humidité (%)',
+            data: [],
+            borderColor: 'rgba(54, 162, 235, 1)', // Bleu
+            borderWidth: 2,
+            fill: false
+          },
+          {
+            label: 'CO (ppm)',
+            data: [],
+            borderColor: 'rgba(255, 159, 64, 1)', // Orange
+            borderWidth: 2,
+            fill: false
+          },
+          {
+            label: 'CO2 (ppm)',
+            data: [],
+            borderColor: 'rgba(75, 192, 192, 1)', // Turquoise
+            borderWidth: 2,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // Fonction pour mettre à jour l'interprétation
+    function updateInterpretation(temp, humidity, co, co2) {
+      const interpretationText = document.getElementById('interpretation-text');
+      let message = "";
+
+      // Interprétation pour la température
+      if (temp > 50) {
+        message += "⚠️ <strong>Température critique</strong> : Danger d'incendie. Évacuation immédiate requise!.<br>";
+      } else if (temp > 30) {
+        message += "🌡️ <strong>Température élevée</strong> : Surveillez la situation.<br>";
+      } else {
+        message += "🌡️ <strong>Température normale</strong> : Aucun risque détecté.<br>";
+      }
+
+      // Interprétation pour l'humidité
+      if (humidity > 60) {
+        message += "💧 <strong>Humidité élevée</strong> : Risque de moisissure. Aérez la zone.<br>";
+      } else if (humidity < 30) {
+        message += "💧 <strong>Air sec</strong> : Risque d'incendie accru. Surveillez la situation.<br>";
+      } else {
+        message += "💧 <strong>Humidité normale</strong> : Conditions optimales.<br>";
+      }
+
+      // Interprétation pour le CO
+      if (co > 35) {
+        message += "☠️ <strong>CO élevé</strong> : Danger pour la santé. Évacuation immédiate.<br>";
+      } else if (co > 10) {
+        message += "⚠️ <strong>CO modéré</strong> : Aérez la zone.<br>";
+      } else {
+        message += "✅ <strong>CO normal</strong> : Aucun danger.<br>";
+      }
+
+      // Interprétation pour le CO2
+      if (co2 > 2000) {
+        message += "💨 <strong>CO2 élevé</strong> : Air vicié. Aérez immédiatement.<br>";
+      } else if (co2 > 1000) {
+        message += "⚠️ <strong>CO2 modéré</strong> : Aération recommandée.<br>";
+      } else {
+        message += "✅ <strong>CO2 normal</strong> : Air sain.<br>";
+      }
+
+      interpretationText.innerHTML = message;
+    }
+
+    // Écoute des données en temps réel
+    sensorsRef.on('value', (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+
+        // Ajouter les nouvelles données au graphique
+        const newLabels = generalChart.data.labels;
+        const newTempData = generalChart.data.datasets[0].data;
+        const newHumidityData = generalChart.data.datasets[1].data;
+        const newCOData = generalChart.data.datasets[2].data;
+        const newCO2Data = generalChart.data.datasets[3].data;
+
+        newLabels.push(new Date().toLocaleTimeString()); // Heure actuelle
+        newTempData.push(data.temp); // Température
+        newHumidityData.push(data.humidite); // Humidité
+        newCOData.push(data.co); // CO
+        newCO2Data.push(data.co2); // CO2
+
+        // Limiter le nombre de points affichés
+        if (newLabels.length > 10) {
+          newLabels.shift();
+          newTempData.shift();
+          newHumidityData.shift();
+          newCOData.shift();
+          newCO2Data.shift();
+        }
+
+        // Mettre à jour le graphique
+        generalChart.update();
+
+        // Mettre à jour l'interprétation
+        updateInterpretation(data.temp, data.humidite, data.co, data.co2);
+      } else {
+        console.error("Aucune donnée trouvée dans Firebase.");
+      }
+    });
+  </script>
+</body>
+</html>

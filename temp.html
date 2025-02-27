@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analyse de la Température</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+</head>
+<body>
+  <h1>Analyse de la Température</h1>
+  <canvas id="temperatureChart" width="800" height="400"></canvas>
+  <script>
+    // Configuration Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQR6SPQmcR_VB4iMyb5kdr-CFCgnsBp6Q",
+      authDomain: "fire-detection-aafdc.firebaseapp.com",
+      databaseURL: "https://fire-detection-aafdc-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "fire-detection-aafdc",
+      storageBucket: "fire-detection-aafdc.firebasestorage.app",
+      messagingSenderId: "866669467002",
+      appId: "1:866669467002:web:2139a073556a7527afb2c3"
+    };
+
+    // Initialisation Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const sensorsRef = database.ref('sensor');
+
+    // Configuration du graphique
+    const ctx = document.getElementById('temperatureChart').getContext('2d');
+    const temperatureChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [], // Étiquettes de temps
+        datasets: [{
+          label: 'Température (°C)',
+          data: [], // Données de température
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 2,
+          fill: false
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // Écoute des données en temps réel
+    sensorsRef.on('value', (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+
+        // Ajouter les nouvelles données au graphique
+        const newLabels = temperatureChart.data.labels;
+        const newData = temperatureChart.data.datasets[0].data;
+
+        newLabels.push(new Date().toLocaleTimeString()); // Heure actuelle
+        newData.push(data.temp); // Donnée de température
+
+        // Limiter le nombre de points affichés
+        if (newLabels.length > 10) {
+          newLabels.shift();
+          newData.shift();
+        }
+
+        // Mettre à jour le graphique
+        temperatureChart.update();
+      } else {
+        console.error("Aucune donnée trouvée dans Firebase.");
+      }
+    });
+  </script>
+</body>
+<section id="analyse">
+  <h2>Analyse de la Température</h2>
+  <p>
+      Ce graphique affiche les variations de la température en temps réel, mesurées en degrés Celsius (°C).
+      Une température élevée peut indiquer un risque d'incendie. Voici quelques seuils à surveiller :
+  </p>
+  <ul>
+      <li><strong>0°C à 30°C</strong> : Température normale.</li>
+      <li><strong>30°C à 50°C</strong> : Température élevée, risque modéré.</li>
+      <li><strong>Au-dessus de 50°C</strong> : Danger d'incendie, action immédiate requise.</li>
+  </ul>
+  <p>
+      En cas de température critique, assurez-vous d'évacuer la zone et de contacter les services d'urgence.
+  </p>
+</section>
+
+</html>

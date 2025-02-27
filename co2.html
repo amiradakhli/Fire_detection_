@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analyse du Dioxyde de Carbone (CO2)</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+</head>
+<body>
+  <h1>Analyse du Dioxyde de Carbone (CO2)</h1>
+  <canvas id="co2Chart" width="800" height="400"></canvas>
+
+  <script>
+    // Configuration Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQR6SPQmcR_VB4iMyb5kdr-CFCgnsBp6Q",
+      authDomain: "fire-detection-aafdc.firebaseapp.com",
+      databaseURL: "https://fire-detection-aafdc-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "fire-detection-aafdc",
+      storageBucket: "fire-detection-aafdc.firebasestorage.app",
+      messagingSenderId: "866669467002",
+      appId: "1:866669467002:web:2139a073556a7527afb2c3"
+    };
+
+    // Initialisation Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const sensorsRef = database.ref('sensor');
+
+    // Configuration du graphique
+    const ctx = document.getElementById('co2Chart').getContext('2d');
+    const co2Chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [], // Étiquettes de temps
+        datasets: [{
+          label: 'Dioxyde de Carbone (CO2) (ppm)',
+          data: [], // Données de CO2
+          borderColor: 'rgba(75, 192, 192, 1)', // Turquoise
+          borderWidth: 2,
+          fill: false
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // Écoute des données en temps réel
+    sensorsRef.on('value', (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+
+        // Ajouter les nouvelles données au graphique
+        const newLabels = co2Chart.data.labels;
+        const newData = co2Chart.data.datasets[0].data;
+
+        newLabels.push(new Date().toLocaleTimeString()); // Heure actuelle
+        newData.push(data.co2); // Donnée de CO2
+
+        // Limiter le nombre de points affichés
+        if (newLabels.length > 10) {
+          newLabels.shift();
+          newData.shift();
+        }
+
+        // Mettre à jour le graphique
+        co2Chart.update();
+      } else {
+        console.error("Aucune donnée trouvée dans Firebase.");
+      }
+    });
+  </script>
+</body>
+<section id="analyse">
+    <h2>Analyse du Dioxyde de Carbone (CO2)</h2>
+    <p>
+        Ce graphique montre les niveaux de dioxyde de carbone (CO2) en temps réel, mesurés en parties par million (ppm).
+        Un niveau élevé de CO2 peut affecter la qualité de l'air. Voici les repères :
+    </p>
+    <ul>
+        <li><strong>0 ppm à 1000 ppm</strong> : Niveau normal, air sain.</li>
+        <li><strong>1000 ppm à 2000 ppm</strong> : Niveau modéré, aération recommandée.</li>
+        <li><strong>Au-dessus de 2000 ppm</strong> : Air vicié, risque pour la santé.</li>
+    </ul>
+    <p>
+        Assurez une bonne ventilation pour maintenir un air de qualité.
+    </p>
+</section>
+</html>

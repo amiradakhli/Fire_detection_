@@ -1,0 +1,19 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #6BA292;
+    color: #000000;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  canvas {
+    max-width: 800px;
+    margin: 0 auto;
+    display: block;
+  }

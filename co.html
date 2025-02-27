@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analyse du Monoxyde de Carbone (CO)</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+</head>
+<body>
+  <h1>Analyse du Monoxyde de Carbone (CO)</h1>
+  <canvas id="coChart" width="800" height="400"></canvas>
+
+  <script>
+    // Configuration Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQR6SPQmcR_VB4iMyb5kdr-CFCgnsBp6Q",
+      authDomain: "fire-detection-aafdc.firebaseapp.com",
+      databaseURL: "https://fire-detection-aafdc-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "fire-detection-aafdc",
+      storageBucket: "fire-detection-aafdc.firebasestorage.app",
+      messagingSenderId: "866669467002",
+      appId: "1:866669467002:web:2139a073556a7527afb2c3"
+    };
+
+    // Initialisation Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const sensorsRef = database.ref('sensor');
+
+    // Configuration du graphique
+    const ctx = document.getElementById('coChart').getContext('2d');
+    const coChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [], // Étiquettes de temps
+        datasets: [{
+          label: 'Monoxyde de Carbone (CO) (ppm)',
+          data: [], // Données de CO
+          borderColor: 'rgba(255, 159, 64, 1)', // Orange
+          borderWidth: 2,
+          fill: false
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // Écoute des données en temps réel
+    sensorsRef.on('value', (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+
+        // Ajouter les nouvelles données au graphique
+        const newLabels = coChart.data.labels;
+        const newData = coChart.data.datasets[0].data;
+
+        newLabels.push(new Date().toLocaleTimeString()); // Heure actuelle
+        newData.push(data.co); // Donnée de CO
+
+        // Limiter le nombre de points affichés
+        if (newLabels.length > 10) {
+          newLabels.shift();
+          newData.shift();
+        }
+
+        // Mettre à jour le graphique
+        coChart.update();
+      } else {
+        console.error("Aucune donnée trouvée dans Firebase.");
+      }
+    });
+  </script>
+</body>
+<section id="analyse">
+    <h2>Analyse du Monoxyde de Carbone (CO)</h2>
+    <p>
+        Ce graphique affiche les niveaux de monoxyde de carbone (CO) en temps réel, mesurés en parties par million (ppm).
+        Le CO est un gaz toxique et inodore. Voici les seuils à surveiller :
+    </p>
+    <ul>
+        <li><strong>0 ppm à 9 ppm</strong> : Niveau normal, pas de danger.</li>
+        <li><strong>10 ppm à 35 ppm</strong> : Niveau modéré, aération recommandée.</li>
+        <li><strong>Au-dessus de 35 ppm</strong> : Danger pour la santé, évacuation immédiate.</li>
+    </ul>
+    <p>
+        En cas de niveau élevé de CO, quittez la zone et contactez les secours.
+    </p>
+</section>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analyse de l'Humidité</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+</head>
+<body>
+  <h1>Analyse de l'Humidité</h1>
+  <canvas id="humidityChart" width="800" height="400"></canvas>
+
+  <script>
+    // Configuration Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQR6SPQmcR_VB4iMyb5kdr-CFCgnsBp6Q",
+      authDomain: "fire-detection-aafdc.firebaseapp.com",
+      databaseURL: "https://fire-detection-aafdc-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "fire-detection-aafdc",
+      storageBucket: "fire-detection-aafdc.firebasestorage.app",
+      messagingSenderId: "866669467002",
+      appId: "1:866669467002:web:2139a073556a7527afb2c3"
+    };
+
+    // Initialisation Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const sensorsRef = database.ref('sensor');
+
+    // Configuration du graphique
+    const ctx = document.getElementById('humidityChart').getContext('2d');
+    const humidityChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [], // Étiquettes de temps
+        datasets: [{
+          label: 'Humidité (%)',
+          data: [], // Données d'humidité
+          borderColor: 'rgba(54, 162, 235, 1)', // Bleu
+          borderWidth: 2,
+          fill: false
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // Écoute des données en temps réel
+    sensorsRef.on('value', (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+
+        // Ajouter les nouvelles données au graphique
+        const newLabels = humidityChart.data.labels;
+        const newData = humidityChart.data.datasets[0].data;
+
+        newLabels.push(new Date().toLocaleTimeString()); // Heure actuelle
+        newData.push(data.humidite); // Donnée d'humidité
+
+        // Limiter le nombre de points affichés
+        if (newLabels.length > 10) {
+          newLabels.shift();
+          newData.shift();
+        }
+
+        // Mettre à jour le graphique
+        humidityChart.update();
+      } else {
+        console.error("Aucune donnée trouvée dans Firebase.");
+      }
+    });
+  </script>
+</body>
+<section id="analyse">
+  <h2>Analyse de l'Humidité</h2>
+  <p>
+      Ce graphique montre les niveaux d'humidité en temps réel, mesurés en pourcentage (%). 
+      L'humidité influence le risque d'incendie et le confort environnemental. Voici quelques repères :
+  </p>
+  <ul>
+      <li><strong>0% à 30%</strong> : Air très sec, risque d'incendie accru.</li>
+      <li><strong>30% à 60%</strong> : Humidité normale, conditions optimales.</li>
+      <li><strong>Au-dessus de 60%</strong> : Air humide, risque de moisissure.</li>
+  </ul>
+  <p>
+      Maintenez un niveau d'humidité optimal pour prévenir les risques.
+  </p>
+</section>
+</html>
