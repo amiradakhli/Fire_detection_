@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription - Surveillance des Incendies Forestiers</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Styles généraux */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: #1e3d33; /* Vert foncé */
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* Fond avec motifs de feuilles */
+    body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('https://www.transparenttextures.com/patterns/leaves.png');
+        opacity: 0.2;
+        z-index: -1;
+    }
+
+    /* Formulaire d'inscription */
+    .signup-container {
+        max-width: 400px;
+        width: 100%;
+        padding: 40px;
+        background: rgba(32, 64, 54, 0.8); /* Vert foncé semi-transparent */
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .signup-container h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #ddcbcb; /* Rouge orangé */
+        margin: 0 0 20px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .signup-container input {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        font-size: 1rem;
+        outline: none;
+    }
+
+    .signup-container input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .signup-container button {
+        width: 100%;
+        padding: 10px;
+        margin: 20px 0;
+        border: none;
+        border-radius: 5px;
+        background: #ff6b6b; /* Rouge orangé */
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .signup-container button:hover {
+        background: #ff4500; /* Rouge plus foncé */
+    }
+
+    .signup-container .error-message {
+        color: #ff6b6b;
+        font-size: 0.9rem;
+        margin-top: 10px;
+        display: none;
+    }
+
+    .signup-container .error-message.active {
+        display: block;
+    }
+
+    /* Message de succès */
+    .signup-container .success-message {
+        color: #9fcecb; /* Turquoise */
+        font-size: 1rem;
+        margin-top: 10px;
+        display: none;
+    }
+
+    .signup-container .success-message.active {
+        display: block;
+    }
+
+    /* Lien de connexion */
+    .signup-container .login-link {
+        color: #fff;
+        font-size: 0.9rem;
+        margin-top: 10px;
+    }
+
+    .signup-container .login-link a {
+        color: #ff6b6b;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .signup-container .login-link a:hover {
+        text-decoration: underline;
+    }
+
+    /* Footer */
+    footer {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <h1>Inscription</h1>
+    <form id="signup-form">
+      <input type="text" id="username" placeholder="Nom d'utilisateur" required>
+      <input type="email" id="email" placeholder="Adresse e-mail" required>
+      <input type="tel" id="phone" placeholder="Numéro de téléphone" required>
+      <input type="password" id="password" placeholder="Mot de passe" required>
+      <input type="password" id="confirm-password" placeholder="Confirmer le mot de passe" required>
+      <button type="submit">S'inscrire</button>
+      <div id="error-message" class="error-message"></div>
+      <div id="success-message" class="success-message"></div>
+      <div class="login-link">
+        Déjà inscrit ? <a href="login.html">Se connecter</a>
+      </div>
+    </form>
+  </div>
+
+  <footer>
+    &copy; 2023 Surveillance des Incendies Forestiers. Tous droits réservés.
+  </footer>
+
+  <script>
+    // Gestion du formulaire d'inscription
+    const signupForm = document.getElementById('signup-form');
+    const errorMessage = document.getElementById('error-message');
+    const successMessage = document.getElementById('success-message');
+
+    signupForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+
+      // Validation des champs
+      if (password !== confirmPassword) {
+        errorMessage.textContent = 'Les mots de passe ne correspondent pas.';
+        errorMessage.classList.add('active');
+        return;
+      }
+
+      // Validation du numéro de téléphone (exemple simple)
+      const phoneRegex = /^[0-9]{10}$/; // Format: 10 chiffres
+      if (!phoneRegex.test(phone)) {
+        errorMessage.textContent = 'Numéro de téléphone invalide. Veuillez entrer 10 chiffres.';
+        errorMessage.classList.add('active');
+        return;
+      }
+
+      // Exemple de traitement des données
+      const userData = {
+        username,
+        email,
+        phone,
+        password,
+      };
+
+      // Stocker les données dans localStorage (pour l'exemple)
+      localStorage.setItem('userData', JSON.stringify(userData));
+
+      // Afficher le message de succès
+      successMessage.textContent = 'Inscription réussie ! Redirection vers la page de connexion...';
+      successMessage.classList.add('active');
+
+      // Redirection vers la page de connexion après 3 secondes
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 3000); // 3 secondes
+    });
+  </script>
+</body>
+</html>
