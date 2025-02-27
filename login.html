@@ -103,6 +103,33 @@
     .login-container .error-message.active {
         display: block;
     }
+
+    /* Lien d'inscription */
+    .login-container .signup-link {
+        color: #fff;
+        font-size: 0.9rem;
+        margin-top: 10px;
+    }
+
+    .login-container .signup-link a {
+        color: #ff6b6b;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .login-container .signup-link a:hover {
+        text-decoration: underline;
+    }
+
+    /* Footer */
+    footer {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
   </style>
 </head>
 <body>
@@ -113,8 +140,15 @@
       <input type="password" id="password" placeholder="Mot de passe" required>
       <button type="submit">Se connecter</button>
       <div id="error-message" class="error-message"></div>
+      <div class="signup-link">
+        Pas encore inscrit ? <a href="inscription.html">Créer un compte</a>
+      </div>
     </form>
   </div>
+
+  <footer>
+    &copy; 2025 Surveillance des Incendies Forestiers. Tous droits réservés.
+  </footer>
 
   <script>
     // Gestion du formulaire de connexion
