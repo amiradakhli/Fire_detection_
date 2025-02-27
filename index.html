@@ -6,82 +6,99 @@
   <title>Surveillance des Incendies Forestiers</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    
-    /* Styles généraux */
-    body {
-        font-family: 'Poppins', sans-serif;
-        background: #1e3d33; /* Vert foncé */
-        color: #fff;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: 100vh;
-        margin: 0;
-        padding: 20px;
-        box-sizing: border-box;
-        overflow-y: auto;
-        position: relative;
-    }
+   /* Styles généraux */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #6BA292; /* Vert doux et naturel */
+    color: #F4F4F4; /* Blanc cassé pour meilleure lisibilité */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    position: relative;
+}
 
-    /* Fond avec motifs de feuilles */
-    body::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: url('https://www.transparenttextures.com/patterns/leaves.png');
-        opacity: 0.2;
-        animation: moveLeaves 20s linear infinite;
-        z-index: -1;
-    }
+/* Fond avec motifs subtils */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://www.transparenttextures.com/patterns/diamond-upholstery.png'); 
+    opacity: 0.2;
+    animation: moveLeaves 20s linear infinite;
+    z-index: -1;
+}
 
-    /* Dashboard */
-    .dashboard {
-        max-width: 2000px;
-        width: 100%;
-        padding: 40px;
-        background: rgba(32, 64, 54, 0.8); /* Vert foncé semi-transparent */
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        text-align: center;
-        position: relative;
-        overflow: hidden;
-        margin-top: 80px;
-    }
+/* Dashboard */
+.dashboard {
+    max-width: 1600px;
+    width: 100%;
+    padding: 40px;
+    background: rgba(32, 78, 64, 0.85); /* Vert profond avec effet de verre dépoli */
+    backdrop-filter: blur(15px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-top: 60px;
+}
+
+/* Effet lumineux sur le dashboard */
+.dashboard::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -20%;
+    width: 150%;
+    height: 150%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(32, 78, 64, 0.1) 60%);
+    opacity: 0.3;
+}
+
+/* Titre */
+h1 {
+    color: #FFD700; /* Doré pour une touche élégante */
+    font-size: 28px;
+}
+
+/* Contenu */
+p {
+    color: #D9EAD3; /* Vert pastel pour un effet naturel */
+    font-size: 18px;
+}
+
 
     /* Titre */
-      
-h1 {
-    font-size: clamp(1.8rem, 5vw, 2.5rem); /* Taille adaptable entre 1.8rem et 2.5rem */
-    font-weight: 700;
-    color: #ddcbcb; 
-    margin: 0 auto 40px;
-    position: relative;
-    display: block;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-align: center; /* Centre le texte */
-    max-width: 90%; /* Empêche le débordement */
-    word-wrap: break-word; /* Coupe les mots longs */
-    overflow: hidden;
-    z-index: 999;
-}
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #ddcbcb; /* Rouge orangé */
+        margin: 0 0 40px;
+        position: relative;
+        display: inline-block;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        z-index: 999;
+    }
 
     h1::after {
-    content: '';
-    display: block;
-    width: 80%; /* Adapte la ligne au texte */
-    max-width: 600px; /* Évite un dépassement sur petits écrans */
-    height: 4px;
-    background: linear-gradient(90deg, #994747, #ff4500);
-    margin: 10px auto 0;
-    border-radius: 2px;
-}
-
+        content: '';
+        display: block;
+        width: 600px;
+        height: 4px;
+        background: linear-gradient(90deg, #994747, #ff4500);
+        margin: 10px auto 0;
+        border-radius: 2px;
+    }
 
     /* Bouton de menu */
     #menu-button {
@@ -112,7 +129,7 @@ h1 {
         right: -400px; /* Cachée par défaut, plus large */
         width: 400px; /* Largeur augmentée */
         height: 100%;
-        background: rgba(22, 44, 34, 0.95); /* Couleur différente (gris foncé) */
+        background: rgba(67, 96, 84, 0.95); /* Couleur différente (gris foncé) */
         backdrop-filter: blur(10px);
         box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
         transition: right 0.3s ease;
@@ -237,7 +254,7 @@ h1 {
     }
 
     .data-card[data-type="flame"] {
-        color: #d44a4a; /* Rouge */
+        color: #f36637; /* Rouge */
     }
 
     /* Texte des cartes */
@@ -263,7 +280,7 @@ h1 {
         margin: 20px 0;
         position: relative;
         overflow: hidden;
-        color: white;
+        color: rgb(0, 0, 0);
         font-size: 1.2rem;
         font-weight: 600;
         text-align: left;
@@ -423,7 +440,7 @@ h1 {
     }
   </style>
 </head>
-<body>
+ <body>
   <!-- Bouton de menu -->
   <button id="menu-button">
     <i class="fas fa-bars"></i> Menu
@@ -434,11 +451,11 @@ h1 {
     <div class="sidebar-content">
       <h2>Guide du Tableau de Bord</h2>
       <ul>
-        <li><a href="#temperature">Température</a></li>
-        <li><a href="#humidity">Humidité</a></li>
-        <li><a href="#co2">CO2</a></li>
-        <li><a href="#co">CO</a></li>
-        <li><a href="#flame">Flamme</a></li>
+        <li><a href="temp.html#analyse">Voir Analyse de la température</a></li>
+        <li><a href="humidite.html#analyse">voir l'analyse dHumidité</a></li>
+        <li><a href="co2.html#analyse">voir l'analyse de CO2</a></li>
+        <li><a href="co.html#analyse">voir l'analyse de CO</a></li>
+        <li><a href="General.html#analyse">voir l'analyse générale</a></li>
       </ul>
       <button class="logout-button" id="sidebar-logout">
         <i class="fas fa-sign-out-alt"></i> Déconnexion
@@ -507,7 +524,8 @@ h1 {
       <p>Une flamme a été détectée. Danger d'incendie !</p>
     </div>
   </div>
-
+   
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Firebase SDK en mode compatibilité -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -623,6 +641,9 @@ h1 {
       // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
       window.location.href = 'login.html';
     }
+
   </script>
-</body>
+
+ </body>
+
 </html>
