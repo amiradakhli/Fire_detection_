@@ -51,11 +51,10 @@
         position: relative;
         overflow: hidden;
         margin-top: 80px;
-        
     }
-    
 
     /* Titre */
+      
 h1 {
     font-size: clamp(1.8rem, 5vw, 2.5rem); /* Taille adaptable entre 1.8rem et 2.5rem */
     font-weight: 700;
@@ -83,25 +82,108 @@ h1 {
     border-radius: 2px;
 }
 
-    #logout-button {
-      position: fixed; /* Keeps the button in place even when scrolling */
-      top: 20px; /* Distance from the top */
-      right: 20px; /* Distance from the right */
-      padding: 15px 25px;
-      background: #ff6b6b;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: 600;
-      transition: background 0.3s ease, transform 0.3s ease;
-      z-index: 1000; /* Ensures the button is above other elements */
+
+    /* Bouton de menu */
+    #menu-button {
+        position: fixed;
+        top: 20px;
+        right: 20px; /* Déplacé à droite */
+        padding: 15px 25px;
+        background: #4ecdc4; /* Turquoise */
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: background 0.3s ease, transform 0.3s ease;
+        z-index: 1000;
     }
 
-    #logout-button:hover {
-      background: #ff4500; /* Change color on hover */
-      transform: scale(1.05); /* Slight animation on hover */
+    #menu-button:hover {
+        background: #2ecc71; /* Vert clair */
+        transform: scale(1.05);
+    }
+
+    /* Sidebar */
+    #sidebar {
+        position: fixed;
+        top: 0;
+        right: -400px; /* Cachée par défaut, plus large */
+        width: 400px; /* Largeur augmentée */
+        height: 100%;
+        background: rgba(22, 44, 34, 0.95); /* Couleur différente (gris foncé) */
+        backdrop-filter: blur(10px);
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+        transition: right 0.3s ease;
+        z-index: 999;
+    }
+
+    #sidebar.active {
+        right: 0; /* Affiche la sidebar */
+    }
+
+    /* Contenu de la sidebar */
+    #sidebar .sidebar-content {
+        padding: 40px;
+    }
+
+    #sidebar h2 {
+        font-size: 2rem; /* Taille augmentée */
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 30px;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 2px solid #4ecdc4; /* Ligne de séparation */
+        padding-bottom: 10px;
+    }
+
+    #sidebar ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    #sidebar ul li {
+        margin: 25px 0; /* Espacement augmenté */
+    }
+
+    #sidebar ul li a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 1.2rem; /* Taille de police augmentée */
+        transition: color 0.3s ease;
+        display: block;
+        padding: 10px;
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.1); /* Fond légèrement visible */
+    }
+
+    #sidebar ul li a:hover {
+        background: rgba(255, 255, 255, 0.2); /* Fond plus visible au survol */
+        color: #4ecdc4; /* Couleur au survol */
+    }
+
+    #sidebar .logout-button {
+        position: absolute;
+        bottom: 40px;
+        left: 40px;
+        right: 40px;
+        padding: 15px;
+        background: #4ecdc4; /* Turquoise */
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.2rem; /* Taille de police augmentée */
+        font-weight: 600;
+        text-align: center;
+        transition: background 0.3s ease;
+    }
+
+    #sidebar .logout-button:hover {
+        background: #2ecc71; /* Vert clair */
     }
 
     /* Conteneur des données */
@@ -244,7 +326,6 @@ h1 {
             transform: translateY(-50%) rotate(10deg);
         }
     }
-    
 
     /* Alerte CO2 */
     .alert.co2 {
@@ -343,6 +424,29 @@ h1 {
   </style>
 </head>
 <body>
+  <!-- Bouton de menu -->
+  <button id="menu-button">
+    <i class="fas fa-bars"></i> Menu
+  </button>
+
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <div class="sidebar-content">
+      <h2>Guide du Tableau de Bord</h2>
+      <ul>
+        <li><a href="#temperature">Température</a></li>
+        <li><a href="#humidity">Humidité</a></li>
+        <li><a href="#co2">CO2</a></li>
+        <li><a href="#co">CO</a></li>
+        <li><a href="#flame">Flamme</a></li>
+      </ul>
+      <button class="logout-button" id="sidebar-logout">
+        <i class="fas fa-sign-out-alt"></i> Déconnexion
+      </button>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
   <div class="dashboard">
     <header>
       <h1>Surveillance des Incendies Forestiers</h1>
@@ -497,28 +601,28 @@ h1 {
     }, (error) => {
       console.error("Erreur de lecture des données :", error);
     });
-  // Vérifier si l'utilisateur est connecté
-  const isLoggedIn = localStorage.getItem('isLoggedIn');
 
-  if (!isLoggedIn || isLoggedIn !== 'true') {
-    // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
-    window.location.href = 'login.html';
-  }
-  
-</script>
-<button id="logout-button" style="position: absolute; top: 20px; right: 20px; padding: 15px 25px; background: #ff6b6b; color: #fff; border: none; border-radius: 10px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: background 0.3s ease, transform 0.3s ease;">
-  Déconnexion
-</button>
+    // Gestion de la sidebar
+    const menuButton = document.getElementById('menu-button');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarLogout = document.getElementById('sidebar-logout');
 
-<script>
-  // Gestion de la déconnexion
-  const logoutButton = document.getElementById('logout-button');
-  logoutButton.addEventListener('click', () => {
-    localStorage.removeItem('isLoggedIn');
-    window.location.href = 'login.html';
-  });
-</script>
+    menuButton.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+    });
+
+    sidebarLogout.addEventListener('click', () => {
+      localStorage.removeItem('isLoggedIn');
+      window.location.href = 'login.html';
+    });
+
+    // Vérifier si l'utilisateur est connecté
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+    if (!isLoggedIn || isLoggedIn !== 'true') {
+      // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+      window.location.href = 'login.html';
+    }
   </script>
 </body>
-
 </html>
