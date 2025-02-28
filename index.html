@@ -6,105 +6,82 @@
   <title>Surveillance des Incendies Forestiers</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-   /* Styles généraux */
-body {
-    font-family: 'Poppins', sans-serif;
-    background: #1E2A38; /* Vert doux et naturel */
-    color: #F4F4F4; /* Blanc cassé pour meilleure lisibilité */
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-    margin: 0;
-    padding: 20px;
-    box-sizing: border-box;
-    overflow-y: auto;
-    position: relative;
-}
+    
+    /* Styles généraux */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: #1E2A38; /* Vert doux et naturel */
+        color: #F4F4F4; /* Blanc cassé pour meilleure lisibilité */
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow-y: auto;
+        position: relative;
+    }
 
-/* Fond avec motifs subtils */
-body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('https://www.transparenttextures.com/patterns/diamond-upholstery.png'); 
-    opacity: 0.2;
-    animation: moveLeaves 20s linear infinite;
-    z-index: -1;
-}
+    /* Fond avec motifs subtils */
+    body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('https://www.transparenttextures.com/patterns/diamond-upholstery.png'); 
+         opacity: 0.2;
+         animation: moveLeaves 20s linear infinite;
+        z-index: -1;
+    }
 
-/* Dashboard */
-.dashboard {
-    max-width: 1600px;
-    width: 100%;
-    padding: 40px;
-    background: rgba(38, 89, 114, 0.85); /* Vert profond avec effet de verre dépoli */
-    backdrop-filter: blur(15px);
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    margin-top: 60px;
-}
+    /* Dashboard */
+    .dashboard {
+        max-width: 1600px;
+        width: 100%;
+        padding: 40px;
+        background: rgba(38, 89, 114, 0.85); /* Vert profond avec effet de verre dépoli */
+        backdrop-filter: blur(15px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        margin-top: 60px;
+    }
 
-/* Effet lumineux sur le dashboard */
-.dashboard::before {
-    content: '';
-    position: absolute;
-    top: -20%;
-    left: -20%;
-    width: 150%;
-    height: 150%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(32, 78, 64, 0.1) 60%);
-    opacity: 0.3;
-}
-
-/* Titre */
-h1 {
-    color: #FFD700; /* Doré pour une touche élégante */
-    font-size: 28px;
-}
-
-/* Contenu */
-p {
-    color: #D9EAD3; /* Vert pastel pour un effet naturel */
-    font-size: 18px;
-}
-
+    /* Effet lumineux sur le dashboard */
+    .dashboard::before {
+        content: '';
+        position: absolute;
+        top: -20%;
+        left: -20%;
+        width: 150%;
+        height: 150%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(32, 78, 64, 0.1) 60%);
+        opacity: 0.3;
+    }
 
     /* Titre */
     h1 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #ddcbcb; /* Rouge orangé */
-        margin: 0 0 40px;
-        position: relative;
-        display: inline-block;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        z-index: 999;
+        color: #FFD700; /* Doré pour une touche élégante */
+        font-size: 28px;
     }
 
-    h1::after {
-        content: '';
-        display: block;
-        width: 600px;
-        height: 4px;
-        background: linear-gradient(90deg, #994747, #ff4500);
-        margin: 10px auto 0;
-        border-radius: 2px;
+    /* Contenu */
+    p {
+        color: #D9EAD3; /* Vert pastel pour un effet naturel */
+        font-size: 18px;
     }
 
     /* Bouton de menu */
     #menu-button {
         position: fixed;
         top: 20px;
-        right: 20px; /* Déplacé à droite */
+        right: 20px;
         padding: 15px 25px;
         background: #639390; /* Turquoise */
         color: #060606;
@@ -126,8 +103,8 @@ p {
     #sidebar {
         position: fixed;
         top: 0;
-        right: -400px; /* Cachée par défaut, plus large */
-        width: 400px; /* Largeur augmentée */
+        right: -400px;
+        width: 400px;
         height: 100%;
         background: rgba(67, 96, 84, 0.95); /* Couleur différente (gris foncé) */
         backdrop-filter: blur(10px);
@@ -146,7 +123,7 @@ p {
     }
 
     #sidebar h2 {
-        font-size: 2rem; /* Taille augmentée */
+        font-size: 2rem;
         font-weight: 700;
         color: #fff;
         margin-bottom: 30px;
@@ -163,23 +140,23 @@ p {
     }
 
     #sidebar ul li {
-        margin: 25px 0; /* Espacement augmenté */
+        margin: 25px 0;
     }
 
     #sidebar ul li a {
         color: #fff;
         text-decoration: none;
-        font-size: 1.2rem; /* Taille de police augmentée */
+        font-size: 1.2rem;
         transition: color 0.3s ease;
         display: block;
         padding: 10px;
         border-radius: 5px;
-        background: rgba(255, 255, 255, 0.1); /* Fond légèrement visible */
+        background: rgba(255, 255, 255, 0.1);
     }
 
     #sidebar ul li a:hover {
-        background: rgba(255, 255, 255, 0.2); /* Fond plus visible au survol */
-        color: #4ecdc4; /* Couleur au survol */
+        background: rgba(255, 255, 255, 0.2);
+        color: #4ecdc4;
     }
 
     #sidebar .logout-button {
@@ -188,19 +165,19 @@ p {
         left: 40px;
         right: 40px;
         padding: 15px;
-        background: #4ecdc4; /* Turquoise */
+        background: #1E2A38;
         color: #fff;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 1.2rem; /* Taille de police augmentée */
+        font-size: 1.2rem;
         font-weight: 600;
         text-align: center;
         transition: background 0.3s ease;
     }
 
     #sidebar .logout-button:hover {
-        background: #2ecc71; /* Vert clair */
+        background: #2ecc71;
     }
 
     /* Conteneur des données */
@@ -216,7 +193,7 @@ p {
         padding: 25px;
         border-radius: 15px;
         text-align: center;
-        background: rgba(130, 106, 76, 0.8); /* Marron clair */
+        background: rgba(130, 106, 76, 0.8);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.1);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -238,23 +215,23 @@ p {
     }
 
     .data-card[data-type="temperature"] {
-        color: #ff6b6b; /* Rouge orangé */
+        color: #ff6b6b;
     }
 
     .data-card[data-type="humidity"] {
-        color: #4ecdc4; /* Turquoise */
+        color: #4ecdc4;
     }
 
     .data-card[data-type="co2"] {
-        color: #2ecc71; /* Vert clair */
+        color: #2ecc71;
     }
 
     .data-card[data-type="co"] {
-        color: #f39c12; /* Orange */
+        color: #f39c12;
     }
 
     .data-card[data-type="flame"] {
-        color: #f36637; /* Rouge */
+        color: #f36637;
     }
 
     /* Texte des cartes */
@@ -343,6 +320,7 @@ p {
             transform: translateY(-50%) rotate(10deg);
         }
     }
+
 
     /* Alerte CO2 */
     .alert.co2 {
@@ -440,7 +418,7 @@ p {
     }
   </style>
 </head>
- <body>
+<body>
   <!-- Bouton de menu -->
   <button id="menu-button">
     <i class="fas fa-bars"></i> Menu
@@ -452,10 +430,10 @@ p {
       <h2>Guide du Tableau de Bord</h2>
       <ul>
         <li><a href="temp.html#analyse">Voir Analyse de la température</a></li>
-        <li><a href="humidite.html#analyse">voir l'analyse dHumidité</a></li>
-        <li><a href="co2.html#analyse">voir l'analyse de CO2</a></li>
-        <li><a href="co.html#analyse">voir l'analyse de CO</a></li>
-        <li><a href="General.html#analyse">voir l'analyse générale</a></li>
+        <li><a href="humidite.html#analyse">Voir l'analyse d'Humidité</a></li>
+        <li><a href="co2.html#analyse">Voir l'analyse de CO2</a></li>
+        <li><a href="co.html#analyse">Voir l'analyse de CO</a></li>
+        <li><a href="General.html#analyse">Voir l'analyse générale</a></li>
       </ul>
       <button class="logout-button" id="sidebar-logout">
         <i class="fas fa-sign-out-alt"></i> Déconnexion
@@ -531,6 +509,24 @@ p {
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
   <script>
+    // Vérifier si l'utilisateur est connecté
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+    if (!isLoggedIn || isLoggedIn !== 'true') {
+      // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+      window.location.href = 'login.html';
+    }
+
+    // Empêcher l'accès via l'historique du navigateur
+    window.onpageshow = (event) => {
+      if (event.persisted) {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if (!isLoggedIn || isLoggedIn !== 'true') {
+          window.location.href = 'login.html';
+        }
+      }
+    };
+
     // Configuration Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyAQR6SPQmcR_VB4iMyb5kdr-CFCgnsBp6Q",
@@ -620,6 +616,7 @@ p {
       console.error("Erreur de lecture des données :", error);
     });
 
+
     // Gestion de la sidebar
     const menuButton = document.getElementById('menu-button');
     const sidebar = document.getElementById('sidebar');
@@ -633,17 +630,7 @@ p {
       localStorage.removeItem('isLoggedIn');
       window.location.href = 'login.html';
     });
-
-    // Vérifier si l'utilisateur est connecté
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-
-    if (!isLoggedIn || isLoggedIn !== 'true') {
-      // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
-      window.location.href = 'login.html';
-    }
-
   </script>
-
- </body>
+</body>
 
 </html>
