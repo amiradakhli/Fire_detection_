@@ -49,12 +49,6 @@
         position: relative;
         overflow: hidden;
     }
-    /* Adaptation pour les écrans plus petits */
-@media (max-width: 480px) {
-    .signup-container {
-        padding: 20px;
-    }
-  }
 
     .login-container h1 {
         font-size: 2rem;
@@ -179,6 +173,16 @@
         errorMessage.classList.add('active');
       }
     });
+
+    // Empêcher l'accès via l'historique du navigateur
+    window.onpageshow = (event) => {
+      if (event.persisted) {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if (!isLoggedIn || isLoggedIn !== 'true') {
+          window.location.href = 'login.html';
+        }
+      }
+    };
   </script>
 </body>
-</html>
+</html> 
