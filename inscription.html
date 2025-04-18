@@ -9,7 +9,7 @@
     /* Styles généraux */
     body {
         font-family: 'Poppins', sans-serif;
-        background: #1E2A38; /* Vert foncé */
+        background: #1E2A38;
         color: #fff;
         display: flex;
         justify-content: center;
@@ -37,10 +37,10 @@
 
     /* Formulaire d'inscription */
     .signup-container {
-        max-width: 400px;
+        max-width: 450px;
         width: 100%;
         padding: 40px;
-        background: rgba(32, 64, 54, 0.8); /* Vert foncé semi-transparent */
+        background: rgba(32, 64, 54, 0.8);
         backdrop-filter: blur(10px);
         border-radius: 20px;
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -53,7 +53,7 @@
     .signup-container h1 {
         font-size: 2rem;
         font-weight: 700;
-        color: #ddcbcb; /* Rouge orangé */
+        color: #ddcbcb;
         margin: 0 0 20px;
         text-transform: uppercase;
         letter-spacing: 2px;
@@ -61,7 +61,7 @@
 
     .signup-container input {
         width: 100%;
-        padding: 10px;
+        padding: 12px 15px;
         margin: 10px 0;
         border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 5px;
@@ -69,6 +69,11 @@
         color: #fff;
         font-size: 1rem;
         outline: none;
+        transition: border 0.3s ease;
+    }
+
+    .signup-container input:focus {
+        border-color: #ff6b6b;
     }
 
     .signup-container input::placeholder {
@@ -77,38 +82,46 @@
 
     .signup-container button {
         width: 100%;
-        padding: 10px;
+        padding: 12px;
         margin: 20px 0;
         border: none;
         border-radius: 5px;
-        background: #ff6b6b; /* Rouge orangé */
+        background: #ff6b6b;
         color: #fff;
         font-size: 1rem;
         font-weight: 600;
         cursor: pointer;
-        transition: background 0.3s ease;
+        transition: all 0.3s ease;
     }
 
     .signup-container button:hover {
-        background: #ff4500; /* Rouge plus foncé */
+        background: #ff4500;
+        transform: translateY(-2px);
     }
 
+    .signup-container button:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    /* Messages d'erreur et de succès */
     .signup-container .error-message {
         color: #ff6b6b;
         font-size: 0.9rem;
         margin-top: 10px;
         display: none;
+        text-align: left;
     }
 
     .signup-container .error-message.active {
         display: block;
     }
 
-    /* Message de succès */
     .signup-container .success-message {
-        color: #9fcecb; /* Turquoise */
+        color: #4ecdc4;
         font-size: 1rem;
-        margin-top: 10px;
+        margin: 15px 0;
         display: none;
     }
 
@@ -116,11 +129,27 @@
         display: block;
     }
 
+    /* Indicateur de force du mot de passe */
+    .password-strength {
+        height: 5px;
+        background: #ddd;
+        border-radius: 5px;
+        margin: 10px 0;
+        overflow: hidden;
+    }
+
+    .password-strength-bar {
+        height: 100%;
+        width: 0%;
+        background: #ff6b6b;
+        transition: width 0.3s ease, background 0.3s ease;
+    }
+
     /* Lien de connexion */
     .signup-container .login-link {
         color: #fff;
         font-size: 0.9rem;
-        margin-top: 10px;
+        margin-top: 15px;
     }
 
     .signup-container .login-link a {
@@ -133,6 +162,23 @@
         text-decoration: underline;
     }
 
+    /* Loader */
+    .loader {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
     /* Footer */
     footer {
         position: absolute;
@@ -142,20 +188,55 @@
         font-size: 0.8rem;
         color: rgba(255, 255, 255, 0.7);
     }
+
+    /* Afficher/masquer le mot de passe */
+    .password-toggle {
+        position: relative;
+    }
+
+    .password-toggle i {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .password-toggle i:hover {
+        color: rgba(255, 255, 255, 0.8);
+    }
   </style>
 </head>
 <body>
   <div class="signup-container">
     <h1>Inscription</h1>
     <form id="signup-form">
-      <input type="text" id="username" placeholder="Nom d'utilisateur" required>
+      <input type="text" id="fullname" placeholder="Nom complet" required>
       <input type="email" id="email" placeholder="Adresse e-mail" required>
-      <input type="tel" id="phone" placeholder="Numéro de téléphone" required>
-      <input type="password" id="password" placeholder="Mot de passe" required>
-      <input type="password" id="confirm-password" placeholder="Confirmer le mot de passe" required>
-      <button type="submit">S'inscrire</button>
+      <input type="tel" id="phone" placeholder="Numéro de téléphone (ex: 0612345678)" required>
+      
+      <div class="password-toggle">
+        <input type="password" id="password" placeholder="Mot de passe (min. 8 caractères)" required minlength="8">
+        <i class="far fa-eye" id="toggle-password"></i>
+      </div>
+      <div class="password-strength">
+        <div class="password-strength-bar" id="password-strength-bar"></div>
+      </div>
+      
+      <div class="password-toggle">
+        <input type="password" id="confirm-password" placeholder="Confirmer le mot de passe" required>
+        <i class="far fa-eye" id="toggle-confirm-password"></i>
+      </div>
+      
+      <button type="submit" id="signup-button">
+        <span id="button-text">S'inscrire</span>
+        <span id="button-loader" class="loader" style="display: none;"></span>
+      </button>
+      
       <div id="error-message" class="error-message"></div>
       <div id="success-message" class="success-message"></div>
+      
       <div class="login-link">
         Déjà inscrit ? <a href="login.html">Se connecter</a>
       </div>
@@ -163,59 +244,210 @@
   </div>
 
   <footer>
-    &copy; 2023 Surveillance des Incendies Forestiers. Tous droits réservés.
+    &copy; 2025 Surveillance des Incendies Forestiers. Tous droits réservés.
   </footer>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
   <script>
-    // Gestion du formulaire d'inscription
+    // Configuration Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQR6SPQmcR_VB4iMyb5kdr-CFCgnsBp6Q",
+      authDomain: "fire-detection-aafdc.firebaseapp.com",
+      databaseURL: "https://fire-detection-aafdc-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "fire-detection-aafdc",
+      storageBucket: "fire-detection-aafdc.firebasestorage.app",
+      messagingSenderId: "866669467002",
+      appId: "1:866669467002:web:2139a073556a7527afb2c3"
+    };
+
+    // Initialisation Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
+
+    // Références aux éléments du DOM
     const signupForm = document.getElementById('signup-form');
+    const fullnameInput = document.getElementById('fullname');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+    const signupButton = document.getElementById('signup-button');
+    const buttonText = document.getElementById('button-text');
+    const buttonLoader = document.getElementById('button-loader');
     const errorMessage = document.getElementById('error-message');
     const successMessage = document.getElementById('success-message');
+    const passwordStrengthBar = document.getElementById('password-strength-bar');
+    const togglePassword = document.getElementById('toggle-password');
+    const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
 
-    signupForm.addEventListener('submit', (e) => {
+    // Afficher/masquer le mot de passe
+    togglePassword.addEventListener('click', function() {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      this.classList.toggle('fa-eye-slash');
+    });
+
+    toggleConfirmPassword.addEventListener('click', function() {
+      const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      confirmPasswordInput.setAttribute('type', type);
+      this.classList.toggle('fa-eye-slash');
+    });
+
+    // Vérification de la force du mot de passe
+    passwordInput.addEventListener('input', function() {
+      const password = this.value;
+      let strength = 0;
+      
+      // Longueur minimale
+      if (password.length >= 8) strength += 20;
+      
+      // Contient des lettres minuscules et majuscules
+      if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 20;
+      
+      // Contient des chiffres
+      if (/\d/.test(password)) strength += 20;
+      
+      // Contient des caractères spéciaux
+      if (/[^a-zA-Z0-9]/.test(password)) strength += 20;
+      
+      // Longueur supplémentaire
+      if (password.length >= 12) strength += 20;
+      
+      // Mise à jour de la barre de progression
+      passwordStrengthBar.style.width = strength + '%';
+      
+      // Changement de couleur selon la force
+      if (strength < 40) {
+        passwordStrengthBar.style.background = '#ff6b6b'; // Rouge
+      } else if (strength < 70) {
+        passwordStrengthBar.style.background = '#f39c12'; // Orange
+      } else {
+        passwordStrengthBar.style.background = '#2ecc71'; // Vert
+      }
+    });
+
+    // Gestion du formulaire d'inscription
+    signupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      // Récupération des valeurs
+      const fullname = fullnameInput.value.trim();
+      const email = emailInput.value.trim();
+      const phone = phoneInput.value.trim();
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
 
-      const username = document.getElementById('username').value;
-      const email = document.getElementById('email').value;
-      const phone = document.getElementById('phone').value;
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirm-password').value;
+      // Réinitialisation des messages
+      errorMessage.textContent = '';
+      errorMessage.classList.remove('active');
+      successMessage.textContent = '';
+      successMessage.classList.remove('active');
 
       // Validation des champs
+      if (!fullname || !email || !phone || !password || !confirmPassword) {
+        showError('Tous les champs sont obligatoires.');
+        return;
+      }
+
       if (password !== confirmPassword) {
-        errorMessage.textContent = 'Les mots de passe ne correspondent pas.';
-        errorMessage.classList.add('active');
+        showError('Les mots de passe ne correspondent pas.');
         return;
       }
 
-      // Validation du numéro de téléphone (exemple simple)
-      const phoneRegex = /^[0-9]{10}$/; // Format: 10 chiffres
+      if (password.length < 8) {
+        showError('Le mot de passe doit contenir au moins 8 caractères.');
+        return;
+      }
+
+      // Validation du numéro de téléphone
+      const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
       if (!phoneRegex.test(phone)) {
-        errorMessage.textContent = 'Numéro de téléphone invalide. Veuillez entrer 10 chiffres.';
-        errorMessage.classList.add('active');
+        showError('Numéro de téléphone invalide. Format attendu: 0612345678');
         return;
       }
 
-      // Exemple de traitement des données
-      const userData = {
-        username,
-        email,
-        phone,
-        password,
-      };
+      // Validation de l'email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showError('Adresse email invalide.');
+        return;
+      }
 
-      // Stocker les données dans localStorage (pour l'exemple)
-      localStorage.setItem('userData', JSON.stringify(userData));
+      // Désactiver le bouton et afficher le loader
+      signupButton.disabled = true;
+      buttonText.textContent = 'Inscription en cours...';
+      buttonLoader.style.display = 'inline-block';
 
-      // Afficher le message de succès
-      successMessage.textContent = 'Inscription réussie ! Redirection vers la page de connexion...';
-      successMessage.classList.add('active');
+      try {
+        // Création du compte avec Firebase Auth
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        // Enregistrement des informations supplémentaires dans la base de données
+        await database.ref('users/' + user.uid).set({
+          fullname: fullname,
+          email: email,
+          phone: phone,
+          status: 'pending', // En attente de validation admin
+          createdAt: firebase.database.ServerValue.TIMESTAMP,
+          isAdmin: false
+        });
 
-      // Redirection vers la page de connexion après 3 secondes
-      setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 3000); // 3 secondes
+        // Envoyer un email de vérification (optionnel)
+        await user.sendEmailVerification();
+
+        // Afficher le message de succès
+        showSuccess('Inscription réussie ! Votre compte est en attente de validation par un administrateur. Vous serez notifié par email une fois votre compte approuvé.');
+
+        // Réinitialiser le formulaire
+        signupForm.reset();
+        passwordStrengthBar.style.width = '0%';
+
+        // Redirection vers la page de connexion après 5 secondes
+        setTimeout(() => {
+          window.location.href = 'login.html?newUser=true';
+        }, 10000);
+
+      } catch (error) {
+        // Gestion des erreurs
+        console.error('Erreur lors de l\'inscription:', error);
+        
+        let errorMsg = error.message;
+        if (error.code === 'auth/email-already-in-use') {
+          errorMsg = 'Cette adresse email est déjà utilisée.';
+        } else if (error.code === 'auth/weak-password') {
+          errorMsg = 'Le mot de passe est trop faible.';
+        } else if (error.code === 'auth/invalid-email') {
+          errorMsg = 'Adresse email invalide.';
+        }
+
+        showError(errorMsg);
+      } finally {
+        // Réactiver le bouton
+        signupButton.disabled = false;
+        buttonText.textContent = 'S\'inscrire';
+        buttonLoader.style.display = 'none';
+      }
     });
+
+    // Fonction pour afficher les erreurs
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    // Fonction pour afficher les succès
+    function showSuccess(message) {
+      successMessage.textContent = message;
+      successMessage.classList.add('active');
+      window.scrollTo(0, 0);
+    }
   </script>
 </body>
 </html>
