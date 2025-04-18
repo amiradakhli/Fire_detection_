@@ -9,7 +9,7 @@
     /* Styles généraux */
     body {
         font-family: 'Poppins', sans-serif;
-        background: #1E2A38; /* Vert foncé */
+        background: #1E2A38;
         color: #fff;
         display: flex;
         justify-content: center;
@@ -40,7 +40,7 @@
         max-width: 400px;
         width: 100%;
         padding: 40px;
-        background: rgba(32, 64, 54, 0.8); /* Vert foncé semi-transparent */
+        background: rgba(32, 64, 54, 0.8);
         backdrop-filter: blur(10px);
         border-radius: 20px;
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -53,7 +53,7 @@
     .login-container h1 {
         font-size: 2rem;
         font-weight: 700;
-        color: #ddcbcb; /* Rouge orangé */
+        color: #ddcbcb;
         margin: 0 0 20px;
         text-transform: uppercase;
         letter-spacing: 2px;
@@ -61,7 +61,7 @@
 
     .login-container input {
         width: 100%;
-        padding: 10px;
+        padding: 12px 15px;
         margin: 10px 0;
         border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 5px;
@@ -69,6 +69,11 @@
         color: #fff;
         font-size: 1rem;
         outline: none;
+        transition: border 0.3s ease;
+    }
+
+    .login-container input:focus {
+        border-color: #ff6b6b;
     }
 
     .login-container input::placeholder {
@@ -77,20 +82,27 @@
 
     .login-container button {
         width: 100%;
-        padding: 10px;
+        padding: 12px;
         margin: 20px 0;
         border: none;
         border-radius: 5px;
-        background: #ff6b6b; /* Rouge orangé */
+        background: #ff6b6b;
         color: #fff;
         font-size: 1rem;
         font-weight: 600;
         cursor: pointer;
-        transition: background 0.3s ease;
+        transition: all 0.3s ease;
     }
 
     .login-container button:hover {
-        background: #ff4500; /* Rouge plus foncé */
+        background: #ff4500;
+        transform: translateY(-2px);
+    }
+
+    .login-container button:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+        transform: none;
     }
 
     .login-container .error-message {
@@ -104,21 +116,51 @@
         display: block;
     }
 
-    /* Lien d'inscription */
-    .login-container .signup-link {
-        color: #fff;
+    .login-container .success-message {
+        color: #4ecdc4;
         font-size: 0.9rem;
         margin-top: 10px;
+        display: none;
     }
 
-    .login-container .signup-link a {
+    .login-container .success-message.active {
+        display: block;
+    }
+
+    /* Lien d'inscription et autres liens */
+    .login-container .links {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .login-container .links a {
         color: #ff6b6b;
         text-decoration: none;
         font-weight: 600;
+        font-size: 0.9rem;
     }
 
-    .login-container .signup-link a:hover {
+    .login-container .links a:hover {
         text-decoration: underline;
+    }
+
+    /* Loader */
+    .loader {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
     }
 
     /* Footer */
@@ -136,12 +178,17 @@
   <div class="login-container">
     <h1>Connexion</h1>
     <form id="login-form">
-      <input type="text" id="username" placeholder="Nom d'utilisateur" required>
+      <input type="email" id="email" placeholder="Adresse email" required>
       <input type="password" id="password" placeholder="Mot de passe" required>
-      <button type="submit">Se connecter</button>
+      <button type="submit" id="login-button">
+        <span id="button-text">Se connecter</span>
+        <span id="button-loader" class="loader" style="display: none;"></span>
+      </button>
       <div id="error-message" class="error-message"></div>
-      <div class="signup-link">
-        Pas encore inscrit ? <a href="inscription.html">Créer un compte</a>
+      <div id="success-message" class="success-message"></div>
+      <div class="links">
+        <a href="inscription.html">Créer un compte</a>
+        <a href="reset-password.html">Mot de passe oublié ?</a>
       </div>
     </form>
   </div>
@@ -150,27 +197,114 @@
     &copy; 2025 Surveillance des Incendies Forestiers. Tous droits réservés.
   </footer>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
   <script>
-    // Gestion du formulaire de connexion
+    // Configuration Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQR6SPQmcR_VB4iMyb5kdr-CFCgnsBp6Q",
+      authDomain: "fire-detection-aafdc.firebaseapp.com",
+      databaseURL: "https://fire-detection-aafdc-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "fire-detection-aafdc",
+      storageBucket: "fire-detection-aafdc.firebasestorage.app",
+      messagingSenderId: "866669467002",
+      appId: "1:866669467002:web:2139a073556a7527afb2c3"
+    };
+
+    // Initialisation Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
+
+    // Références aux éléments du DOM
     const loginForm = document.getElementById('login-form');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const loginButton = document.getElementById('login-button');
+    const buttonText = document.getElementById('button-text');
+    const buttonLoader = document.getElementById('button-loader');
     const errorMessage = document.getElementById('error-message');
+    const successMessage = document.getElementById('success-message');
 
-    loginForm.addEventListener('submit', (e) => {
+    // Vérifier si l'utilisateur vient d'être redirigé après inscription
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('newUser')) {
+      successMessage.textContent = 'Inscription réussie ! Votre compte est en attente de validation par un administrateur.';
+      successMessage.classList.add('active');
+    }
+
+    // Gestion du formulaire de connexion
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      const email = emailInput.value;
+      const password = passwordInput.value;
 
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
+      // Afficher le loader et désactiver le bouton
+      buttonText.textContent = 'Connexion en cours...';
+      buttonLoader.style.display = 'inline-block';
+      loginButton.disabled = true;
+      errorMessage.classList.remove('active');
 
-      // Vérification des identifiants (exemple simple)
-      if (username === 'admin' && password === 'admin123') {
-        // Stocker l'état de connexion dans localStorage
-        localStorage.setItem('isLoggedIn', 'true');
+      try {
+        // Tentative de connexion avec Firebase Auth
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        // Vérifier le statut de l'utilisateur dans la base de données
+        const userRef = database.ref('users/' + user.uid);
+        const snapshot = await userRef.once('value');
+        const userData = snapshot.val();
 
-        // Redirection vers la page index.html
-        window.location.href = 'index.html';
-      } else {
-        errorMessage.textContent = 'Nom d\'utilisateur ou mot de passe incorrect.';
+        if (!userData) {
+          throw new Error('Aucune donnée utilisateur trouvée.');
+        }
+
+        // Vérifier le statut du compte
+        if (userData.status === 'pending') {
+          await auth.signOut();
+          throw new Error('Votre compte est en attente de validation par un administrateur.');
+        } else if (userData.status === 'rejected') {
+          await auth.signOut();
+          throw new Error('Votre compte a été rejeté. Contactez l\'administrateur.');
+        } else if (userData.status === 'approved') {
+          // Connexion réussie
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('userId', user.uid);
+          localStorage.setItem('userEmail', user.email);
+          
+          // Redirection vers la page appropriée
+          if (userData.isAdmin) {
+            window.location.href = 'admin-panel.html';
+          } else {
+            window.location.href = 'index.html';
+          }
+        }
+      } catch (error) {
+        // Gestion des erreurs
+        console.error('Erreur de connexion:', error);
+        
+        let errorMsg = error.message;
+        if (error.code === 'auth/user-not-found') {
+          errorMsg = 'Aucun compte trouvé avec cette adresse email.';
+        } else if (error.code === 'auth/wrong-password') {
+          errorMsg = 'Mot de passe incorrect.';
+        } else if (error.code === 'auth/too-many-requests') {
+          errorMsg = 'Trop de tentatives. Veuillez réessayer plus tard.';
+        } else if (error.code === 'auth/user-disabled') {
+          errorMsg = 'Ce compte a été désactivé.';
+        }
+
+        errorMessage.textContent = errorMsg;
         errorMessage.classList.add('active');
+        
+        // Réactiver le bouton
+        buttonText.textContent = 'Se connecter';
+        buttonLoader.style.display = 'none';
+        loginButton.disabled = false;
       }
     });
 
@@ -178,11 +312,35 @@
     window.onpageshow = (event) => {
       if (event.persisted) {
         const isLoggedIn = localStorage.getItem('isLoggedIn');
-        if (!isLoggedIn || isLoggedIn !== 'true') {
-          window.location.href = 'login.html';
+        if (isLoggedIn === 'true') {
+          window.location.href = 'index.html';
         }
       }
     };
+
+    // Vérifier si l'utilisateur est déjà connecté
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        const userId = user.uid;
+        const userRef = database.ref('users/' + userId);
+        
+        userRef.once('value').then((snapshot) => {
+          const userData = snapshot.val();
+          if (userData && userData.status === 'approved') {
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userId', userId);
+            localStorage.setItem('userEmail', user.email);
+            
+            if (userData.isAdmin) {
+              window.location.href = 'admin-panel.html';
+            } else {
+              window.location.href = 'index.html';
+            }
+          }
+        });
+      }
+    });
+    
   </script>
 </body>
-</html> 
+</html>
