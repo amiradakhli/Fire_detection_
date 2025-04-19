@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panneau d'Administration</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --danger-color: #e74c3c;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --dark-color: #2c3e50;
+      --light-color: #ecf0f1;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .admin-title {
+      font-size: 28px;
+      color: var(--dark-color);
+      margin: 0;
+    }
+    
+    .logout-btn {
+      background-color: var(--danger-color);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .logout-btn:hover {
+      background-color: #c0392b;
+      transform: translateY(-2px);
+    }
+    
+    .admin-content {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 20px;
+    }
+    
+    .admin-sidebar {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+    
+    .admin-main {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+    
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .sidebar-menu li {
+      margin-bottom: 10px;
+    }
+    
+    .sidebar-menu a {
+      display: block;
+      padding: 10px 15px;
+      color: var(--dark-color);
+      text-decoration: none;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+    
+    .sidebar-menu a:hover, .sidebar-menu a.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .sidebar-menu i {
+      margin-right: 10px;
+      width: 20px;
+      text-align: center;
+    }
+    
+    .section-title {
+      font-size: 20px;
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: var(--dark-color);
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .users-table th, .users-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .users-table th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: var(--dark-color);
+    }
+    
+    .users-table tr:hover {
+      background-color: #f8f9fa;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .status-pending {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    
+    .status-approved {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    
+    .status-rejected {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    
+    .action-btn {
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .approve-btn {
+      background-color: var(--success-color);
+      color: white;
+    }
+    
+    .approve-btn:hover {
+      background-color: #27ae60;
+    }
+    
+    .reject-btn {
+      background-color: var(--danger-color);
+      color: white;
+    }
+    
+    .reject-btn:hover {
+      background-color: #c0392b;
+    }
+    
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 32px;
+      font-weight: bold;
+      margin: 10px 0;
+      color: var(--primary-color);
+    }
+    
+    .stat-label {
+      color: #7f8c8d;
+      font-size: 14px;
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 5px;
+      color: white;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(-30px);
+      transition: all 0.3s ease;
+    }
+    
+    .notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .notification.success {
+      background-color: #2ecc71;
+    }
+    
+    .notification.error {
+      background-color: #e74c3c;
+    }
+    
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      display: none;
+    }
+    
+    .loading-spinner {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #3498db;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 768px) {
+      .admin-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <header class="admin-header">
+      <h1 class="admin-title">
+        <i class="fas fa-user-shield"></i> Panneau d'Administration
+      </h1>
+      <button id="logout-button" class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i> Déconnexion
+      </button>
+    </header>
+    
+    <div class="admin-content">
+      <aside class="admin-sidebar">
+        <ul class="sidebar-menu">
+          <li><a href="#" class="active"><i class="fas fa-users"></i> Gestion Utilisateurs</a></li>
+          <li><a href="#"><i class="fas fa-chart-line"></i> Statistiques</a></li>
+          <li><a href="#"><i class="fas fa-bell"></i> Alertes</a></li>
+          <li><a href="#"><i class="fas fa-cog"></i> Paramètres</a></li>
+        </ul>
+      </aside>
+      
+      <main class="admin-main">
+        <h2 class="section-title">
+          <i class="fas fa-users-cog"></i> Gestion des Utilisateurs
+        </h2>
+        
+        <div class="stats-cards">
+          <div class="stat-card">
+            <i class="fas fa-user-friends" style="color: var(--primary-color);"></i>
+            <div class="stat-value" id="total-users">0</div>
+            <div class="stat-label">Utilisateurs Totaux</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-user-check" style="color: var(--success-color);"></i>
+            <div class="stat-value" id="approved-users">0</div>
+            <div class="stat-label">Utilisateurs Approuvés</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-user-clock" style="color: var(--warning-color);"></i>
+            <div class="stat-value" id="pending-users">0</div>
+            <div class="stat-label">En Attente</div>
+          </div>
+        </div>
+        
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Statut</th>
+              <th>Date d'Inscription</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-table-body">
+            <!-- Les utilisateurs seront chargés ici -->
+          </tbody>
+        </table>
+      </main>
+    </div>
+  </div>
+
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+  
+  <div id="notification" class="notification"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  
+  <script>
+    // Configuration Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQR6SPQmcR_VB4iMyb5kdr-CFCgnsBp6Q",
+      authDomain: "fire-detection-aafdc.firebaseapp.com",
+      databaseURL: "https://fire-detection-aafdc-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "fire-detection-aafdc",
+      storageBucket: "fire-detection-aafdc.firebasestorage.app",
+      messagingSenderId: "866669467002",
+      appId: "1:866669467002:web:2139a073556a7527afb2c3"
+    };
+
+    // Initialisation Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const auth = firebase.auth();
+
+    // Éléments UI
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const notification = document.getElementById('notification');
+
+    // Fonction pour afficher les notifications
+    function showNotification(message, type = 'success') {
+      notification.textContent = message;
+      notification.className = `notification ${type} show`;
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+
+    // Fonction pour gérer le chargement
+    function setLoading(show) {
+      loadingOverlay.style.display = show ? 'flex' : 'none';
+    }
+
+    // Vérification des droits admin
+    auth.onAuthStateChanged((user) => {
+      console.log("User:", user);
+      if (user) {
+        const userRef = database.ref('users/' + user.uid);
+        userRef.once('value').then((snapshot) => {
+          const userData = snapshot.val();
+          console.log("User data:", userData);
+          if (!userData || !userData.isAdmin || userData.status !== 'approved') {
+            console.error("Accès refusé : pas admin ou non approuvé");
+            auth.signOut().then(() => {
+              window.location.href = 'login.html';
+            });
+          } else {
+            loadUsers();
+          }
+        });
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+
+    // Gestion de la déconnexion
+    document.getElementById('logout-button').addEventListener('click', () => {
+      auth.signOut().then(() => {
+        window.location.href = 'login.html';
+      });
+    });
+
+    // Charger les utilisateurs
+    function loadUsers() {
+      setLoading(true);
+      
+      const usersRef = database.ref('users');
+      usersRef.once('value').then((snapshot) => {
+        const usersTable = document.getElementById('users-table-body');
+        usersTable.innerHTML = '';
+        
+        let totalUsers = 0;
+        let approvedUsers = 0;
+        let pendingUsers = 0;
+        let rejectedUsers = 0;
+        
+        snapshot.forEach((childSnapshot) => {
+          const user = childSnapshot.val();
+          const userId = childSnapshot.key;
+          
+          if (!user.isAdmin) {
+            totalUsers++;
+            
+            if (user.status === 'approved') {
+              approvedUsers++;
+            } else if (user.status === 'rejected') {
+              rejectedUsers++;
+            } else {
+              pendingUsers++;
+            }
+            
+            const statusClass = 
+              user.status === 'approved' ? 'status-approved' :
+              user.status === 'rejected' ? 'status-rejected' : 'status-pending';
+            
+            const statusText = 
+              user.status === 'approved' ? 'Approuvé' :
+              user.status === 'rejected' ? 'Rejeté' : 'En attente';
+            
+            const userRow = document.createElement('tr');
+            userRow.innerHTML = `
+              <td>${user.email}</td>
+              <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+              <td>${formatDate(user.createdAt)}</td>
+              <td>
+                ${user.status !== 'approved' ? 
+                  `<button class="action-btn approve-btn" data-id="${userId}">
+                    <i class="fas fa-check"></i> Approuver
+                  </button>` : ''}
+                <button class="action-btn reject-btn" data-id="${userId}">
+                  <i class="fas fa-times"></i> ${user.status === 'approved' ? 'Rejeter' : 'Supprimer'}
+                </button>
+              </td>
+            `;
+            usersTable.appendChild(userRow);
+          }
+        });
+        
+        document.getElementById('total-users').textContent = totalUsers;
+        document.getElementById('approved-users').textContent = approvedUsers;
+        document.getElementById('pending-users').textContent = pendingUsers;
+        
+        setupActionButtons();
+        setLoading(false);
+      }).catch(error => {
+        showNotification('Erreur de chargement des utilisateurs', 'error');
+        setLoading(false);
+      });
+    }
+
+    // Configurer les boutons d'action
+    function setupActionButtons() {
+      document.querySelectorAll('.approve-btn').forEach(button => {
+        button.addEventListener('click', async (e) => {
+          const userId = e.target.closest('button').getAttribute('data-id');
+          await approveUser(userId);
+        });
+      });
+      
+      document.querySelectorAll('.reject-btn').forEach(button => {
+        button.addEventListener('click', async (e) => {
+          const userId = e.target.closest('button').getAttribute('data-id');
+          const userStatus = e.target.closest('tr').querySelector('.status-badge').textContent.trim();
+          
+          if (userStatus === 'Approuvé') {
+            if (confirm('Êtes-vous sûr de vouloir rejeter cet utilisateur ?')) {
+              await rejectUser(userId);
+            }
+          } else {
+            if (confirm('Êtes-vous sûr de vouloir supprimer définitivement cet utilisateur ?')) {
+              await deleteUser(userId);
+            }
+          }
+        });
+      });
+    }
+
+    // Fonction pour formater la date
+    function formatDate(timestamp) {
+      if (!timestamp) return 'N/A';
+      const date = new Date(timestamp);
+      return date.toLocaleDateString('fr-FR');
+    }
+
+    // Fonction pour approuver un utilisateur
+    async function approveUser(userId) {
+      try {
+        setLoading(true);
+        
+        const updates = {
+          status: 'approved',
+          approvedAt: new Date().toISOString()
+        };
+        
+        await database.ref('users/' + userId).update(updates);
+        showNotification('Utilisateur approuvé avec succès');
+        loadUsers();
+      } catch (error) {
+        console.error('Erreur:', error);
+        showNotification('Erreur lors de l\'approbation', 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    // Fonction pour rejeter un utilisateur
+    async function rejectUser(userId) {
+      try {
+        setLoading(true);
+        
+        const updates = {
+          status: 'rejected',
+          rejectedAt: new Date().toISOString()
+        };
+        
+        await database.ref('users/' + userId).update(updates);
+        showNotification('Utilisateur rejeté avec succès');
+        loadUsers();
+      } catch (error) {
+        console.error('Erreur:', error);
+        showNotification('Erreur lors du rejet', 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    // Fonction pour supprimer définitivement un utilisateur
+    async function deleteUser(userId) {
+      try {
+        setLoading(true);
+        await database.ref('users/' + userId).remove();
+        showNotification('Utilisateur supprimé avec succès');
+        loadUsers();
+      } catch (error) {
+        console.error('Erreur:', error);
+        showNotification('Erreur lors de la suppression', 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    // Gestion du menu de navigation
+    document.querySelectorAll('.sidebar-menu a').forEach(menuItem => {
+      menuItem.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        // Retirer la classe active de tous les éléments
+        document.querySelectorAll('.sidebar-menu a').forEach(item => {
+          item.classList.remove('active');
+        });
+        
+        // Ajouter la classe active à l'élément cliqué
+        e.target.classList.add('active');
+        
+        // Charger le contenu approprié
+        const menuText = e.target.textContent.trim();
+        switch(menuText) {
+          case 'Gestion Utilisateurs':
+            showUserManagement();
+            break;
+          case 'Statistiques':
+            showStatistics();
+            break;
+          case 'Alertes':
+            showAlerts();
+            break;
+          case 'Paramètres':
+            showSettings();
+            break;
+        }
+      });
+    });
+
+    // Fonctions pour afficher les différentes sections
+    function showUserManagement() {
+      document.querySelector('.admin-main').innerHTML = `
+        <h2 class="section-title">
+          <i class="fas fa-users-cog"></i> Gestion des Utilisateurs
+        </h2>
+        
+        <div class="stats-cards">
+          <div class="stat-card">
+            <i class="fas fa-user-friends" style="color: var(--primary-color);"></i>
+            <div class="stat-value" id="total-users">0</div>
+            <div class="stat-label">Utilisateurs Totaux</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-user-check" style="color: var(--success-color);"></i>
+            <div class="stat-value" id="approved-users">0</div>
+            <div class="stat-label">Utilisateurs Approuvés</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-user-clock" style="color: var(--warning-color);"></i>
+            <div class="stat-value" id="pending-users">0</div>
+            <div class="stat-label">En Attente</div>
+          </div>
+        </div>
+        
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Statut</th>
+              <th>Date d'Inscription</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-table-body">
+            <!-- Les utilisateurs seront chargés ici -->
+          </tbody>
+        </table>
+      `;
+      
+      loadUsers();
+    }
+
+    function showStatistics() {
+      setLoading(true);
+      
+      // Simuler un chargement de données
+      setTimeout(() => {
+        document.querySelector('.admin-main').innerHTML = `
+          <h2 class="section-title">
+            <i class="fas fa-chart-line"></i> Statistiques
+          </h2>
+          
+          <div class="stats-cards">
+            <div class="stat-card">
+              <i class="fas fa-fire" style="color: var(--danger-color);"></i>
+              <div class="stat-value" id="total-alerts">24</div>
+              <div class="stat-label">Alertes Incendie</div>
+            </div>
+            <div class="stat-card">
+              <i class="fas fa-map-marker-alt" style="color: var(--primary-color);"></i>
+              <div class="stat-value" id="locations">5</div>
+              <div class="stat-label">Zones Surveillées</div>
+            </div>
+            <div class="stat-card">
+              <i class="fas fa-bell" style="color: var(--warning-color);"></i>
+              <div class="stat-value" id="notifications">128</div>
+              <div class="stat-label">Notifications</div>
+            </div>
+          </div>
+          
+          <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
+            <canvas id="statsChart" height="300"></canvas>
+          </div>
+        `;
+        
+        // Initialiser un graphique (nécessite Chart.js)
+        initStatsChart();
+        setLoading(false);
+      }, 1000);
+    }
+
+    function showAlerts() {
+      setLoading(true);
+      
+      // Charger les alertes depuis Firebase
+      database.ref('alerts').once('value').then(snapshot => {
+        let alertsHTML = `
+          <h2 class="section-title">
+            <i class="fas fa-bell"></i> Alertes Récentes
+          </h2>
+          
+          <div class="alerts-container">
+        `;
+        
+        if (snapshot.exists()) {
+          snapshot.forEach(childSnapshot => {
+            const alert = childSnapshot.val();
+            alertsHTML += `
+              <div class="alert-item" style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <strong style="color: var(--danger-color);">${alert.type}</strong>
+                  <p style="margin: 5px 0; color: #666;">${alert.message}</p>
+                  <small style="color: #999;">${formatDate(alert.timestamp)}</small>
+                </div>
+                <button class="action-btn" style="background-color: var(--dark-color);" data-id="${childSnapshot.key}">
+                  <i class="fas fa-check"></i> Marquer comme lue
+                </button>
+              </div>
+            `;
+          });
+        } else {
+          alertsHTML += `<p style="text-align: center; color: #999;">Aucune alerte récente</p>`;
+        }
+        
+        alertsHTML += `</div>`;
+        document.querySelector('.admin-main').innerHTML = alertsHTML;
+        
+        // Configurer les boutons de marquage des alertes
+        document.querySelectorAll('.alert-item button').forEach(button => {
+          button.addEventListener('click', (e) => {
+            const alertId = e.target.closest('button').getAttribute('data-id');
+            markAlertAsRead(alertId);
+          });
+        });
+        
+        setLoading(false);
+      }).catch(error => {
+        showNotification('Erreur de chargement des alertes', 'error');
+        setLoading(false);
+      });
+    }
+
+    function showSettings() {
+      document.querySelector('.admin-main').innerHTML = `
+        <h2 class="section-title">
+          <i class="fas fa-cog"></i> Paramètres du Système
+        </h2>
+        
+        <form id="settings-form" style="max-width: 500px;">
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Notifications par email</label>
+            <select name="email_notifications" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+              <option value="enabled">Activées</option>
+              <option value="disabled">Désactivées</option>
+            </select>
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Seuil d'alerte incendie</label>
+            <input type="range" name="alert_threshold" min="1" max="10" value="5" style="width: 100%;">
+            <div style="text-align: center; margin-top: 5px; color: #666;">Niveau: <span id="threshold-value">5</span>/10</div>
+          </div>
+          
+          <button type="submit" class="action-btn" style="background-color: var(--primary-color); width: 100%; padding: 12px;">
+            <i class="fas fa-save"></i> Enregistrer les paramètres
+          </button>
+        </form>
+      `;
+      
+      // Mettre à jour la valeur du seuil en temps réel
+      document.querySelector('input[name="alert_threshold"]').addEventListener('input', (e) => {
+        document.getElementById('threshold-value').textContent = e.target.value;
+      });
+      
+      // Gérer la soumission du formulaire
+      document.getElementById('settings-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        showNotification('Paramètres enregistrés avec succès');
+      });
+    }
+
+    // Fonction pour marquer une alerte comme lue
+    function markAlertAsRead(alertId) {
+      setLoading(true);
+      database.ref('alerts/' + alertId).update({ read: true })
+        .then(() => {
+          showNotification('Alerte marquée comme lue');
+          showAlerts(); // Recharger la liste
+        })
+        .catch(error => {
+          showNotification('Erreur lors du marquage de l\'alerte', 'error');
+          setLoading(false);
+        });
+    }
+
+    // Fonction pour initialiser le graphique de statistiques
+    function initStatsChart() {
+      // Cette fonction nécessite la bibliothèque Chart.js
+      if (typeof Chart === 'undefined') {
+        console.warn('Chart.js n\'est pas chargé');
+        return;
+      }
+      
+      const ctx = document.getElementById('statsChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'],
+          datasets: [{
+            label: 'Alertes par mois',
+            data: [12, 19, 3, 5, 2, 3],
+            backgroundColor: 'rgba(231, 76, 60, 0.7)',
+            borderColor: 'rgba(231, 76, 60, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    // Charger la gestion des utilisateurs par défaut
+    showUserManagement();
+  </script>
+</body>
+</html>
