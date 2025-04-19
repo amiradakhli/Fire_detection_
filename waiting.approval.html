@@ -46,6 +46,11 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .logout-btn:hover {
+      background: #e05555;
+      transform: translateY(-2px);
     }
   </style>
 </head>
@@ -55,11 +60,15 @@
     <h2>Validation en cours</h2>
     <p>Votre compte est en attente de validation par un administrateur.</p>
     <p>Vous recevrez un email une fois votre compte approuvé.</p>
-    <button class="logout-btn" id="logout-button">Se déconnecter</button>
+    <button class="logout-btn" id="logout-button">
+      <i class="fas fa-sign-out-alt"></i> Se déconnecter
+    </button>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  
   <script>
     // Configuration Firebase
     const firebaseConfig = {
@@ -75,31 +84,48 @@
     // Initialisation Firebase
     const app = firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    const database = firebase.database();
+
+    // Vérification de l'état d'authentification
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+      } else {
+        checkUserApprovalStatus(user.uid);
+      }
+    });
 
     // Gestion de la déconnexion
     document.getElementById('logout-button').addEventListener('click', () => {
       auth.signOut().then(() => {
-        localStorage.removeItem('isLoggedIn');
         window.location.href = 'login.html';
+      }).catch((error) => {
+        console.error("Erreur de déconnexion:", error);
+        alert("Une erreur est survenue lors de la déconnexion");
       });
     });
 
-    // Vérification périodique du statut
-    function checkApprovalStatus() {
-      const user = auth.currentUser;
-      if (user) {
-        const userRef = firebase.database().ref('users/' + user.uid);
-        userRef.once('value').then((snapshot) => {
-          const userData = snapshot.val();
-          if (userData && userData.status === 'approved') {
-            window.location.href = 'index.html';
-          }
-        });
-      }
+    // Vérification du statut d'approbation
+    function checkUserApprovalStatus(userId) {
+      const userRef = database.ref('users/' + userId);
+      
+      userRef.on('value', (snapshot) => {
+        const userData = snapshot.val();
+        if (userData && userData.status === 'approved') {
+          window.location.href = 'index.html';
+        }
+      });
     }
 
-    // Vérifier toutes les 30 secondes
-    setInterval(checkApprovalStatus, 30000);
+    // Vérification périodique toutes les 30 secondes
+    const approvalCheckInterval = setInterval(() => {
+      const user = auth.currentUser;
+      if (user) {
+        checkUserApprovalStatus(user.uid);
+      } else {
+        clearInterval(approvalCheckInterval);
+      }
+    }, 30000);
   </script>
 </body>
 </html>
