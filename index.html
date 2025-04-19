@@ -6,425 +6,331 @@
   <title>Surveillance des Incendies Forestiers</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    
-    /* Styles généraux */
     body {
-        font-family: 'Poppins', sans-serif;
-        background: #1E2A38; /* Vert doux et naturel */
-        color: #F4F4F4; /* Blanc cassé pour meilleure lisibilité */
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: 100vh;
-        margin: 0;
-        padding: 20px;
-        box-sizing: border-box;
-        overflow-y: auto;
-        position: relative;
+      font-family: 'Poppins', sans-serif;
+      background: #1E2A38;
+      color: #F4F4F4;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+      position: relative;
     }
-
-    /* Fond avec motifs subtils */
     body::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: url('https://www.transparenttextures.com/patterns/diamond-upholstery.png'); 
-         opacity: 0.2;
-         animation: moveLeaves 20s linear infinite;
-        z-index: -1;
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://www.transparenttextures.com/patterns/diamond-upholstery.png');
+      opacity: 0.15;
+      z-index: -1;
     }
-
-    /* Dashboard */
     .dashboard {
-        max-width: 1600px;
-        width: 100%;
-        padding: 40px;
-        background: rgba(38, 89, 114, 0.85); /* Vert profond avec effet de verre dépoli */
-        backdrop-filter: blur(15px);
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-        text-align: center;
-        position: relative;
-        overflow: hidden;
-        margin-top: 60px;
+      max-width: 1600px;
+      width: 100%;
+      padding: 40px;
+      background: rgba(38, 89, 114, 0.85);
+      backdrop-filter: blur(15px);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      margin-top: 60px;
     }
-
-    /* Effet lumineux sur le dashboard */
     .dashboard::before {
-        content: '';
-        position: absolute;
-        top: -20%;
-        left: -20%;
-        width: 150%;
-        height: 150%;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(32, 78, 64, 0.1) 60%);
-        opacity: 0.3;
+      content: '';
+      position: absolute;
+      top: -20%;
+      left: -20%;
+      width: 150%;
+      height: 150%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(32, 78, 64, 0.1) 60%);
+      opacity: 0.3;
     }
-
-    /* Titre */
     h1 {
-        color: #FFD700; /* Doré pour une touche élégante */
-        font-size: 28px;
+      color: #FFD700;
+      font-size: 28px;
     }
-
-    /* Contenu */
     p {
-        color: #D9EAD3; /* Vert pastel pour un effet naturel */
-        font-size: 18px;
+      color: #D9EAD3;
+      font-size: 18px;
     }
-
-    /* Bouton de menu */
     #menu-button {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 15px 25px;
-        background: #639390; /* Turquoise */
-        color: #060606;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1rem;
-        font-weight: 600;
-        transition: background 0.3s ease, transform 0.3s ease;
-        z-index: 1000;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      background: #639390;
+      color: #060606;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      z-index: 1000;
     }
-
     #menu-button:hover {
-        background: #2ecc71; /* Vert clair */
-        transform: scale(1.05);
+      background: #2ecc71;
+      transform: scale(1.05);
     }
-
-    /* Sidebar */
     #sidebar {
-        position: fixed;
-        top: 0;
-        right: -400px;
-        width: 400px;
-        height: 100%;
-        background: rgba(67, 96, 84, 0.95); /* Couleur différente (gris foncé) */
-        backdrop-filter: blur(10px);
-        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
-        transition: right 0.3s ease;
-        z-index: 999;
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100%;
+      background: rgba(67, 96, 84, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+      transition: right 0.3s ease;
+      z-index: 999;
     }
-
     #sidebar.active {
-        right: 0; /* Affiche la sidebar */
+      right: 0;
     }
-
-    /* Contenu de la sidebar */
     #sidebar .sidebar-content {
-        padding: 40px;
+      padding: 40px;
     }
-
     #sidebar h2 {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #fff;
-        margin-bottom: 30px;
-        text-align: center;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        border-bottom: 2px solid #4ecdc4; /* Ligne de séparation */
-        padding-bottom: 10px;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 30px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 2px solid #4ecdc4;
+      padding-bottom: 10px;
     }
-
     #sidebar ul {
-        list-style: none;
-        padding: 0;
+      list-style: none;
+      padding: 0;
     }
-
     #sidebar ul li {
-        margin: 25px 0;
+      margin: 25px 0;
     }
-
     #sidebar ul li a {
-        color: #fff;
-        text-decoration: none;
-        font-size: 1.2rem;
-        transition: color 0.3s ease;
-        display: block;
-        padding: 10px;
-        border-radius: 5px;
-        background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+      display: block;
+      padding: 10px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.1);
     }
-
     #sidebar ul li a:hover {
-        background: rgba(255, 255, 255, 0.2);
-        color: #4ecdc4;
+      background: rgba(255, 255, 255, 0.2);
+      color: #4ecdc4;
     }
-
     #sidebar .logout-button {
-        position: absolute;
-        bottom: 40px;
-        left: 40px;
-        right: 40px;
-        padding: 15px;
-        background: #1E2A38;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1.2rem;
-        font-weight: 600;
-        text-align: center;
-        transition: background 0.3s ease;
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      right: 40px;
+      padding: 15px;
+      background: #1E2A38;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.3s ease;
     }
-
     #sidebar .logout-button:hover {
-        background: #2ecc71;
+      background: #2ecc71;
     }
-
-    /* Conteneur des données */
     .data-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 30px;
-        margin-bottom: 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
     }
-
-    /* Cartes de données */
     .data-card {
-        padding: 25px;
-        border-radius: 15px;
-        text-align: center;
-        background: rgba(130, 106, 76, 0.8);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        position: relative;
-        overflow: hidden;
+      padding: 25px;
+      border-radius: 15px;
+      text-align: center;
+      background: rgba(130, 106, 76, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
-
     .data-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
     }
-
-    /* Icônes et couleurs par type */
     .data-card i {
-        font-size: 3rem;
-        margin-bottom: 15px;
-        color: inherit;
-        transition: color 0.3s ease;
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: inherit;
+      transition: color 0.3s ease;
     }
-
     .data-card[data-type="temperature"] {
-        color: #ff6b6b;
+      color: #ff6b6b;
     }
-
     .data-card[data-type="humidity"] {
-        color: #4ecdc4;
+      color: #4ecdc4;
     }
-
     .data-card[data-type="co2"] {
-        color: #2ecc71;
+      color: #2ecc71;
     }
-
     .data-card[data-type="co"] {
-        color: #f39c12;
+      color: #f39c12;
     }
-
     .data-card[data-type="flame"] {
-        color: #f36637;
+      color: #f36637;
     }
-
-    /* Texte des cartes */
     .data-card h2 {
-        font-size: 1.6rem;
-        font-weight: 600;
-        color: #fff;
-        margin: 15px 0;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #fff;
+      margin: 15px 0;
     }
-
     .data-card p {
-        font-size: 1.8rem;
-        font-weight: 500;
-        color: #fff;
-        margin: 0;
+      font-size: 1.8rem;
+      font-weight: 500;
+      color: #fff;
+      margin: 0;
     }
-
-    /* Alertes */
     .alert {
-        display: none;
-        padding: 20px;
-        border-radius: 15px;
-        margin: 20px 0;
-        position: relative;
-        overflow: hidden;
-        color: rgb(0, 0, 0);
-        font-size: 1.2rem;
-        font-weight: 600;
-        text-align: left;
-        animation: fadeIn 0.5s ease-out;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+      display: none;
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px 0;
+      position: relative;
+      overflow: hidden;
+      color: rgb(0, 0, 0);
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: left;
+      animation: fadeIn 0.5s ease-out;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
-
     .alert.active {
-        display: block;
+      display: block;
     }
-
-    /* Alerte Température */
     .alert.temp {
-        background: linear-gradient(135deg, rgba(255, 69, 0, 0.8), rgba(255, 140, 0, 0.8));
-        border-left: 5px solid #FF4500;
+      background: linear-gradient(135deg, rgba(255, 69, 0, 0.8), rgba(255, 140, 0, 0.8));
+      border-left: 5px solid #FF4500;
     }
-
     .alert.temp::after {
-        content: '🔥';
-        position: absolute;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 2rem;
-        animation: flame 1s infinite alternate;
+      content: '🔥';
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      animation: flame 1s infinite alternate;
     }
-
     @keyframes flame {
-        from {
-            transform: translateY(-50%) scale(1);
-        }
-        to {
-            transform: translateY(-50%) scale(1.2);
-        }
+      from { transform: translateY(-50%) scale(1); }
+      to { transform: translateY(-50%) scale(1.2); }
     }
-
-    /* Alerte CO */
     .alert.co {
-        background: linear-gradient(135deg, rgba(139, 0, 0, 0.8), rgba(178, 34, 34, 0.8));
-        border-left: 5px solid #8B0000;
+      background: linear-gradient(135deg, rgba(139, 0, 0, 0.8), rgba(178, 34, 34, 0.8));
+      border-left: 5px solid #8B0000;
     }
-
     .alert.co::after {
-        content: '☠️';
-        position: absolute;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 2rem;
-        animation: skull 1s infinite alternate;
+      content: '☠️';
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      animation: skull 1s infinite alternate;
     }
-
     @keyframes skull {
-        from {
-            transform: translateY(-50%) rotate(0deg);
-        }
-        to {
-            transform: translateY(-50%) rotate(10deg);
-        }
+      from { transform: translateY(-50%) rotate(0deg); }
+      to { transform: translateY(-50%) rotate(10deg); }
     }
-
-
-    /* Alerte CO2 */
     .alert.co2 {
-        background: linear-gradient(135deg, rgba(112, 128, 144, 0.8), rgba(47, 79, 79, 0.8));
-        border-left: 5px solid #708090;
+      background: linear-gradient(135deg, rgba(112, 128, 144, 0.8), rgba(47, 79, 79, 0.8));
+      border-left: 5px solid #708090;
     }
-
     .alert.co2::after {
-        content: '💨';
-        position: absolute;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 2rem;
-        animation: smoke 1s infinite alternate;
+      content: '💨';
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      animation: smoke 1s infinite alternate;
     }
-
     @keyframes smoke {
-        from {
-            opacity: 0.5;
-            transform: translateY(-50%) translateX(0);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(-50%) translateX(10px);
-        }
+      from { opacity: 0.5; transform: translateY(-50%) translateX(0); }
+      to { opacity: 1; transform: translateY(-50%) translateX(10px); }
     }
-
-    /* Alerte Générale */
     .alert.general {
-        background: linear-gradient(135deg, rgba(131, 116, 29, 0.8), rgba(255, 165, 0, 0.8));
-        border-left: 5px solid #FFD700;
+      background: linear-gradient(135deg, rgba(131, 116, 29, 0.8), rgba(255, 165, 0, 0.8));
+      border-left: 5px solid #FFD700;
     }
-
     .alert.general::after {
-        content: '⚠️';
-        position: absolute;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 2rem;
-        animation: warning 1s infinite alternate;
+      content: '⚠️';
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      animation: warning 1s infinite alternate;
     }
-
     @keyframes warning {
-        from {
-            transform: translateY(-50%) rotate(-10deg);
-        }
-        to {
-            transform: translateY(-50%) rotate(10deg);
-        }
+      from { transform: translateY(-50%) rotate(-10deg); }
+      to { transform: translateY(-50%) rotate(10deg); }
     }
-
-    /* Alerte Flamme */
     .alert.flame {
-        background: linear-gradient(135deg, rgba(255, 69, 0, 0.8), rgba(255, 140, 0, 0.8));
-        border-left: 5px solid #FF4500;
+      background: linear-gradient(135deg, rgba(255, 69, 0, 0.8), rgba(255, 140, 0, 0.8));
+      border-left: 5px solid #FF4500;
     }
-
     .alert.flame::after {
-        content: '🔥';
-        position: absolute;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 2rem;
-        animation: flame 1s infinite alternate;
+      content: '🔥';
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      animation: flame 1s infinite alternate;
     }
-
-    /* Responsive */
     @media (max-width: 768px) {
-        .dashboard {
-            padding: 20px;
-        }
-
-        h1 {
-            font-size: 2rem;
-        }
-
-        .data-card {
-            padding: 15px;
-        }
-
-        .data-card h2 {
-            font-size: 1.4rem;
-        }
-
-        .data-card p {
-            font-size: 1.6rem;
-        }
-
-        .alert {
-            font-size: 1rem;
-        }
+      .dashboard {
+        padding: 20px;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      .data-card {
+        padding: 15px;
+      }
+      .data-card h2 {
+        font-size: 1.4rem;
+      }
+      .data-card p {
+        font-size: 1.6rem;
+      }
+      .alert {
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Bouton de menu -->
   <button id="menu-button">
     <i class="fas fa-bars"></i> Menu
   </button>
 
-  <!-- Sidebar -->
   <div id="sidebar">
     <div class="sidebar-content">
       <h2>Guide du Tableau de Bord</h2>
@@ -441,7 +347,6 @@
     </div>
   </div>
 
-  <!-- Dashboard -->
   <div class="dashboard">
     <header>
       <h1>Surveillance des Incendies Forestiers</h1>
@@ -475,7 +380,6 @@
       </article>
     </section>
 
-    <!-- Alertes séparées -->
     <div id="alert-temp" class="alert temp">
       <i class="fas fa-fire"></i>
       <h3>Alerte Température</h3>
@@ -504,29 +408,11 @@
   </div>
    
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Firebase SDK en mode compatibilité -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
   <script>
-    // Vérifier si l'utilisateur est connecté
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-
-    if (!isLoggedIn || isLoggedIn !== 'true') {
-      // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
-      window.location.href = 'login.html';
-    }
-
-    // Empêcher l'accès via l'historique du navigateur
-    window.onpageshow = (event) => {
-      if (event.persisted) {
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
-        if (!isLoggedIn || isLoggedIn !== 'true') {
-          window.location.href = 'login.html';
-        }
-      }
-    };
-
     // Configuration Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyAQR6SPQmcR_VB4iMyb5kdr-CFCgnsBp6Q",
@@ -541,7 +427,25 @@
     // Initialisation Firebase
     const app = firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+    const auth = firebase.auth();
     const sensorsRef = database.ref('sensor');
+
+    // Vérification de l'authentification et de l'approbation
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+      } else {
+        const userRef = database.ref('users/' + user.uid);
+        userRef.once('value').then((snapshot) => {
+          const userData = snapshot.val();
+          if (!userData || userData.status !== 'approved') {
+            auth.signOut().then(() => {
+              window.location.href = 'login.html';
+            });
+          }
+        });
+      }
+    });
 
     // Fonction pour mettre à jour les valeurs des capteurs
     function updateSensorValues(data) {
@@ -594,7 +498,7 @@
         alertFlame.classList.remove('active');
       }
 
-      // Alerte générale (si l'une des conditions est remplie)
+      // Alerte générale
       if (temp > 25 || co > 50 || co2 > 1000 || flame === 1) {
         alertGeneral.classList.add('active');
       } else {
@@ -606,16 +510,14 @@
     sensorsRef.on('value', (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
-        console.log(data);
-        updateSensorValues(data); // Met à jour les valeurs des capteurs
-        handleAlerts(data.temp, data.co, data.co2, data.flame); // Gère les alertes
+        updateSensorValues(data);
+        handleAlerts(data.temp, data.co, data.co2, data.flame);
       } else {
         console.error("Aucune donnée trouvée dans Firebase.");
       }
     }, (error) => {
       console.error("Erreur de lecture des données :", error);
     });
-
 
     // Gestion de la sidebar
     const menuButton = document.getElementById('menu-button');
@@ -627,10 +529,13 @@
     });
 
     sidebarLogout.addEventListener('click', () => {
-      localStorage.removeItem('isLoggedIn');
-      window.location.href = 'login.html';
+      auth.signOut().then(() => {
+        window.location.href = 'login.html';
+      }).catch((error) => {
+        console.error("Erreur de déconnexion:", error);
+        alert("Erreur lors de la déconnexion");
+      });
     });
   </script>
 </body>
-
 </html>
